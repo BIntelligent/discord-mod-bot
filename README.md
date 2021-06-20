@@ -34,6 +34,8 @@ Currently available commands:
 
 - [`Kick`](https://npmjs.com/package/discord-mod-bot#kick) - Kicks a member from the server
 - [`Ban`](https://npmjs.com/package/discord-mod-bot#ban) - Bans a member from the server
+- [`Mute`](https://npmjs.com/package/discord-mod-bot#mute) - Mutes a member from the server
+- [`Unmute`](https://npmjs.com/package/discord-mod-bot#unmute) - Unmutes a member from the server when he/she is muted
 
 *More coming soon..*
 
@@ -75,10 +77,12 @@ client.on('message', async message => {
 
         // Getting the member that is mentioned (has to be a GuildMember not a User)
         const member = message.mentions.members.first()
+
+        // The reason of the mute
         const reason = 'Did something wrong!'
 
         // Running the kick command with the needed params
-        // All {} to use with the message: {member.tag}, {member.username}, {member.id}, {author}, {reason}
+        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {author}, {reason}
         command.kick(message, member, reason, '`{member.tag}` ({member.id}) was kicked by {author} with the reason {reason}')
 
     }
@@ -128,11 +132,15 @@ client.on('message', async message => {
 
         // Getting the member that is mentioned (has to be a GuildMember not a User)
         const member = message.mentions.members.first()
+
+        // The reason of the mute
         const reason = 'Did something wrong!'
+
+        // The total days of the ban
         const days = 7
 
         // Running the ban command with the needed params
-        // All {} to use with the message: {member.tag}, {member.username}, {member.id}, {author}, {reason}, {days}
+        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {author}, {reason}, {days}
         command.ban(message, member, reason, days, '`{member.tag}` ({member.id}) was banned by {author} with the reason {reason} for {days} days')
 
     }
@@ -143,6 +151,129 @@ client.on('message', async message => {
 client.login('TOKEN')
 ```
 
+## mute
+
+Mutes a member from the server.
+
+**Parameters:**
+
+| Parameter   | Description                     | Type        | Position |
+|-------------|---------------------------------|-------------|----------|
+| message     | The param of your message event | Object      | 1        |
+| member      | The member to mute              | GuildMember | 2        |
+| role        | The mute role                   | GuildRole   | 3        |
+| time        | The time of the mute            | string      | 4        |
+| reason      | The reason of the mute          | string      | 5        |
+| description | The message of the embed        | string      | 6        |
+
+<br>
+
+**Example:**
+
+```js
+// Importing the client of the discord.js modules
+const client = new (require('discord.js')).Client()
+
+// Setting up the module with the settings
+require('discord-mod-bot')(client)
+
+// Requiring the commands of the module
+const { command } = require('discord-mod-bot')
+
+// Starting up the client
+client.on('ready', async () => {
+    console.log(`${client.user.tag} is online!`)
+})
+
+client.on('message', async message => {
+
+    // When the message is !mute do..
+    if(message.content.startsWith('!mute')) {
+
+        // Getting the member that is mentioned (has to be a GuildMember not a User)
+        const member = message.mentions.members.first()
+
+        // The role the user gets when muted
+        const role = message.guild.roles.cache.find(role => role.name === 'muted')
+
+        // The time of the mute, example: 10s / 15m / 2h / 1d
+        const time = '10s'
+        // If no time 
+        const time = null || false
+
+        // The reason of the mute
+        const reason = 'Did something wrong!'
+
+        // Running the mute command with the needed params
+        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {author}, {reason}, {time}, {role.name}, {role.id}
+        command.mute(message, member, role, time, reason, '`{member.tag}` ({member.id}) has been muted by {author} with the reason {reason} for {time} with the role {role.name} | {role.id}')
+
+    }
+
+})
+
+// Logging into the client
+client.login('TOKEN')
+```
+
+## unmute
+
+Unmutes a member from the server when he/she is muted.
+
+**Parameters:**
+
+| Parameter   | Description                     | Type        | Position |
+|-------------|---------------------------------|-------------|----------|
+| message     | The param of your message event | Object      | 1        |
+| member      | The member to unmute            | GuildMember | 2        |
+| role        | The mute role                   | GuildRole   | 3        |
+| reason      | The reason of the mute          | string      | 4        |
+| description | The message of the embed        | string      | 5        |
+
+<br>
+
+**Example:**
+
+```js
+// Importing the client of the discord.js modules
+const client = new (require('discord.js')).Client()
+
+// Setting up the module with the settings
+require('discord-mod-bot')(client)
+
+// Requiring the commands of the module
+const { command } = require('discord-mod-bot')
+
+// Starting up the client
+client.on('ready', async () => {
+    console.log(`${client.user.tag} is online!`)
+})
+
+client.on('message', async message => {
+
+    // When the message is !unmute do..
+    if(message.content.startsWith('!unmute')) {
+
+        // Getting the member that is mentioned (has to be a GuildMember not a User)
+        const member = message.mentions.members.first()
+
+        // The mute role of the server
+        const role = message.guild.roles.cache.find(role => role.name === 'muted')
+
+        // The reason of the unmute
+        const reason = 'Did something wrong!'
+
+        // Running the unmute command with the needed params
+        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {author}, {reason}, {role.name}, {role.id}
+        command.unmute(message, member, role, reason, '`{member.tag}` ({member.id}) has been unmuted by {author} with the reason {reason} with the role {role.name} | {role.id}')
+
+    }
+
+})
+
+// Logging into the client
+client.login('TOKEN')
+```
 
 # 💻 Developers
 
