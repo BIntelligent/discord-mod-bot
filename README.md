@@ -36,6 +36,8 @@ Currently available commands:
 - [`Ban`](https://npmjs.com/package/discord-mod-bot#ban) - Bans a member from the server
 - [`Mute`](https://npmjs.com/package/discord-mod-bot#mute) - Mutes a member from the server
 - [`Unmute`](https://npmjs.com/package/discord-mod-bot#unmute) - Unmutes a member from the server when he/she is muted
+- [`Lock`](https://npmjs.com/package/discord-mod-bot#lock) - Locks a channel in the server.
+- [`Unlock`](https://npmjs.com/package/discord-mod-bot#unlock) - Unlocks a channel in the server when locked.
 
 *More coming soon..*
 
@@ -82,7 +84,7 @@ client.on('message', async message => {
         const reason = 'Did something wrong!'
 
         // Running the kick command with the needed params
-        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {author}, {reason}
+        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {member.mention}, {author.tag}, {author.username}, {author.id}, {author.mention}, {reason}
         command.kick(message, member, reason, '`{member.tag}` ({member.id}) was kicked by {author} with the reason {reason}')
 
     }
@@ -140,7 +142,7 @@ client.on('message', async message => {
         const days = 7
 
         // Running the ban command with the needed params
-        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {author}, {reason}, {days}
+        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {member.mention}, {author.tag}, {author.username}, {author.id}, {author.mention}, {reason}, {days}
         command.ban(message, member, reason, days, '`{member.tag}` ({member.id}) was banned by {author} with the reason {reason} for {days} days')
 
     }
@@ -205,7 +207,7 @@ client.on('message', async message => {
         const reason = 'Did something wrong!'
 
         // Running the mute command with the needed params
-        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {author}, {reason}, {time}, {role.name}, {role.id}
+        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {author.tag}, {author.username}, {author.id}, {author.mention}, {reason}, {time}, {role.name},{role.id}, {role.mention}
         command.mute(message, member, role, time, reason, '`{member.tag}` ({member.id}) has been muted by {author} with the reason {reason} for {time} with the role {role.name} | {role.id}')
 
     }
@@ -264,8 +266,119 @@ client.on('message', async message => {
         const reason = 'Did something wrong!'
 
         // Running the unmute command with the needed params
-        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {author}, {reason}, {role.name}, {role.id}
+        // All {} to use with the description: {member.tag}, {member.username}, {member.id}, {member.mention}, {author.tag}, {author.username}, {author.id}, {author.mention}, {reason}, {role.name}, {role.id}, {role.mention}
         command.unmute(message, member, role, reason, '`{member.tag}` ({member.id}) has been unmuted by {author} with the reason {reason} with the role {role.name} | {role.id}')
+
+    }
+
+})
+
+// Logging into the client
+client.login('TOKEN')
+```
+
+## lock
+
+Locks a channel in the server.
+
+**Parameters:**
+
+| Parameter   | Description                          | Type         | Position |
+|-------------|--------------------------------------|--------------|----------|
+| message     | The param of your message event      | Object       | 1        |
+| channel     | The channel to lock                  | GuildChannel | 2        |
+| reason      | The reason why the channel is locked | string       | 3        |
+| description | The message of the embed             | string       | 4        |
+
+<br>
+
+**Example:**
+
+```js
+// Importing the client of the discord.js modules
+const client = new (require('discord.js')).Client()
+
+// Setting up the module with the settings
+require('discord-mod-bot')(client)
+
+// Requiring the commands of the module
+const { command } = require('discord-mod-bot')
+
+// Starting up the client
+client.on('ready', async () => {
+    console.log(`${client.user.tag} is online!`)
+})
+
+client.on('message', async message => {
+
+    // When the message is !lock do..
+    if(message.content.startsWith('!lock')) {
+
+        // Getting the channel that has to be locked
+        const channel = message.mentions.channels.first() || message.channel
+
+        // The reason of the lock
+        const reason = 'A raid is happening!'
+
+        // Running the lock command with the needed params
+        // All {} to use with the description: {channel.name}, {channel.id}, {channel.mention}, {reason}, {author.tag}, {author.username}, {author.id}, {author.mention}
+        command.lock(message, channel, reason, 'The channel {channel.name} ({channel.id}) has been locked by {author.tag} ({author.id}) with the reason {reason}')
+
+    }
+
+})
+
+// Logging into the client
+client.login('TOKEN')
+```
+
+## unlock
+
+Unlocks a channel in the server when locked.
+
+**Parameters:**
+
+| Parameter   | Description                            | Type         | Position |
+|-------------|----------------------------------------|--------------|----------|
+| message     | The param of your message event        | Object       | 1        |
+| channel     | The channel to unlock                  | GuildChannel | 2        |
+| reason      | The reason why the channel is unlocked | string       | 3        |
+| description | The message of the embed               | string       | 4        |
+
+
+<br>
+
+**Example:**
+
+```js
+// Importing the client of the discord.js modules
+const client = new (require('discord.js')).Client()
+
+// Setting up the module with the settings
+require('discord-mod-bot')(client)
+
+// Requiring the commands of the module
+const { command } = require('discord-mod-bot')
+
+// Starting up the client
+client.on('ready', async () => {
+    console.log(`${client.user.tag} is online!`)
+})
+
+client.on('message', async message => {
+
+    // When the message is !unlock do..
+    if(message.content.startsWith('!unlock')) {
+
+        // Getting the channel that has to be unlocked
+        const channel = message.mentions.channels.first() || message.channel
+
+        // The reason of the unlock
+        const reason = 'The raid is over!'
+
+        // Running the unlock command with the needed params
+        // All {} to use with the description: {channel.name}, {channel.id}, {channel.mention}, {reason}, {author.tag}, {author.username}, {author.id}, {author.mention}
+        command.lock(message, channel, reason, 'The channel {channel.name} ({channel.id}) has been unlocked by {author.tag} ({author.id}) with the reason {reason}')
 
     }
 
