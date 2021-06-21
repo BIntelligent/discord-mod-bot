@@ -1,4 +1,4 @@
-const { Message, MessageEmbed, Permissions, GuildMemberManager } = require('discord.js')
+const { Message, MessageEmbed, Permissions } = require('discord.js')
 const ms = require('ms')
 const index = require('./index')
 
@@ -90,7 +90,6 @@ class command {
 
         const messageCheck = message instanceof Message
         if(!message || messageCheck === false) throw new Error(`INVALID_MUTE_MESSAGE: There is no discord.js Message provided or it is invalid.`)  
-        if(!member || !index.client.users.cache.get(member.user.id) || message.guild.members.cache.get(member.user.id ? member.user.id : '12345') || !member.user) throw new Error(`INVALID_MUTE_MEMEBR: No valid member has been given`)
         if(!role || !role.id || !message.guild.roles.cache.get(role.id)) throw new Error(`INVALID_MUTE_ROLE: There is no Mute Role provided or it is invalid.`)
         if(!reason || typeof reason !== 'string') reason = '-'
         if(!description || typeof description !== 'string') throw new Error(`INVALID_MUTE_DESCRIPTION: There is no description provided or it isn't a string.`)
@@ -112,7 +111,6 @@ class command {
 
         const messageCheck = message instanceof Message
         if(!message || messageCheck === false) throw new Error(`INVALID_LOCK_MESSAGE: There is no discord.js Message provided or it is invalid.`)  
-        if(!member || !index.client.users.cache.get(member.user.id) || message.guild.members.cache.get(member.user.id ? member.user.id : '12345') || !member.user) throw new Error(`INVALID_LOCK_MEMEBR: No valid member has been given`)
         if(!channel || !channel.id || !message.guild.channels.cache.get(channel.id)) throw new Error(`INVALID_LOCK_CHANNEL: There is no channel provided or it is invalid.`)
         if(!reason || typeof reason !== 'string') reason = '-'
         if(!description || typeof description !== 'string') throw new Error(`INVALID_LOCK_DESCRIPTION: There is no description provided or it isn't a string.`)
@@ -139,7 +137,6 @@ class command {
 
         const messageCheck = message instanceof Message
         if(!message || messageCheck === false) throw new Error(`INVALID_LOCK_MESSAGE: There is no discord.js Message provided or it is invalid.`)  
-        if(!member || !index.client.users.cache.get(member.user.id) || message.guild.members.cache.get(member.user.id ? member.user.id : '12345') || !member.user) throw new Error(`INVALID_LOCK_MEMEBR: No valid member has been given`)
         if(!channel || !channel.id || !message.guild.channels.cache.get(channel.id)) throw new Error(`INVALID_LOCK_CHANNEL: There is no channel provided or it is invalid.`)
         if(!reason || typeof reason !== 'string') reason = '-'
         if(!description || typeof description !== 'string') throw new Error(`INVALID_LOCK_DESCRIPTION: There is no description provided or it isn't a string.`)
@@ -156,6 +153,30 @@ class command {
             ADD_REACTIONS: null
         })
 
+        const embed = new MessageEmbed()
+        .setDescription(description)
+        message.channel.send({ embed: embed })
+
+    }
+
+    slowmode = async(message, channel, time, reason, description) => {
+
+        const messageCheck = message instanceof Message
+        if(!message || messageCheck === false) throw new Error(`INVALID_LOCK_MESSAGE: There is no discord.js Message provided or it is invalid.`)  
+        if(!channel || !channel.id || !message.guild.channels.cache.get(channel.id)) throw new Error(`INVALID_LOCK_CHANNEL: There is no channel provided or it is invalid.`)
+        if(!time) throw new Error(`INVALID_SLOWMODE_TIME: There is no slowmode time provided or it is invalid.`)
+        if(time === 'off') time = 0
+        if(isNaN(time)) throw new Error(`INVALID_SLOWMODE_TIME: There is no slowmode time provided or it is invalid.`)
+        if(filterInt(time) > 21600 || filterInt(time) === 21600) throw new Error(`INVALID_SLOWMODE_TIME: The provided time is over the max limit of seconds (21600 seconds (6 hours)).`)
+        if(!reason || typeof reason !== 'string') reason = '-'
+        if(!description || typeof description !== 'string') throw new Error(`INVALID_LOCK_DESCRIPTION: There is no description provided or it isn't a string.`)
+
+        if(!message.guild.me.permissions.has(Permissions.FLAGS['MANAGE_CHANNELS'])) throw new Error(`NO_BAN_PERMS_BOT: The bot is missing the 'MANAGE_CHANNELS' permissions.`)
+        if(!message.member.permissions.has(Permissions.FLAGS['MANAGE_CHANNELS'])) throw new Error(`NO_BAN_PERMS_MEMBER: The message member is missing the 'MANAGE_CHANNELS' permissions.`)
+
+        description.replace('{channel.name}', channel.name).replace('{channel.id}', channel.id).replace('{channel.mention}', channel).replace('{time}', time).replace('{reason}', reason).replace('{author.username}', message.author.username).replace('{author.tag}', message.author.tag).replace('{author.id}', message.author.id).replace('{author.mention}', message.author)
+
+        channel.rateLimitPerUser(time)
         const embed = new MessageEmbed()
         .setDescription(description)
         message.channel.send({ embed: embed })

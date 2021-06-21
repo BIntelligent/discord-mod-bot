@@ -38,6 +38,7 @@ Currently available commands:
 - [`Unmute`](https://npmjs.com/package/discord-mod-bot#unmute) - Unmutes a member from the server when he/she is muted
 - [`Lock`](https://npmjs.com/package/discord-mod-bot#lock) - Locks a channel in the server.
 - [`Unlock`](https://npmjs.com/package/discord-mod-bot#unlock) - Unlocks a channel in the server when locked.
+- [`Slowmode`](https://npmjs.com/package/discord-mod-bot#slowmode) - Updates the slowmode for a channel.
 
 *More coming soon..*
 
@@ -378,7 +379,67 @@ client.on('message', async message => {
 
         // Running the unlock command with the needed params
         // All {} to use with the description: {channel.name}, {channel.id}, {channel.mention}, {reason}, {author.tag}, {author.username}, {author.id}, {author.mention}
-        command.lock(message, channel, reason, 'The channel {channel.name} ({channel.id}) has been unlocked by {author.tag} ({author.id}) with the reason {reason}')
+        command.unlock(message, channel, reason, 'The channel {channel.name} ({channel.id}) has been unlocked by {author.tag} ({author.id}) with the reason {reason}')
+
+    }
+
+})
+
+// Logging into the client
+client.login('TOKEN')
+```
+
+## slowmode
+
+Updates the slowmode for a channel.
+
+**Parameters:**
+
+| Parameter   | Description                           | Type         | Position |
+|-------------|---------------------------------------|--------------|----------|
+| message     | The param of your message event       | Object       | 1        |
+| channel     | The channel to change slowmode        | GuildChannel | 2        |
+| time        | The amount of seconds of the slowmode | Integer      | 3        |
+| reason      | The reason of the new slowmode        | string       | 4        |
+| description | The message of the embed              | string       | 5        |
+
+
+<br>
+
+**Example:**
+
+```js
+// Importing the client of the discord.js modules
+const client = new (require('discord.js')).Client()
+
+// Setting up the module with the settings
+require('discord-mod-bot')(client)
+
+// Requiring the commands of the module
+const { command } = require('discord-mod-bot')
+
+// Starting up the client
+client.on('ready', async () => {
+    console.log(`${client.user.tag} is online!`)
+})
+
+client.on('message', async message => {
+
+    // When the message is !slowmode do..
+    if(message.content.startsWith('!slowmode')) {
+
+        // Getting the channel for the new slowmode
+        const channel = message.mentions.channels.first() || message.channel
+
+        // The new time of the slowmode, example: 10 = 10 seconds (NOTE: Maximum = 21600)
+        const time = '10'
+
+        // The reason of the slowmode
+        const reason = 'To many spam of messages!'
+
+        // Running the unlock command with the needed params
+        // All {} to use with the description: {channel.name}, {channel.id}, {channel.mention}, {time}, {reason}, {author.tag}, {author.username}, {author.id}, {author.mention}
+        command.slowmode(message, channel, time, reason, 'The slowmode of the channel {channel.name} ({channel.id}) has been updated to {time} seconds by {author.tag} ({author.id}) with the reason {reason}')
 
     }
 
