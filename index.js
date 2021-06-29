@@ -1,4 +1,6 @@
-const { Client } = require('discord.js')
+const {
+    Client
+} = require('discord.js')
 
 module.exports = async(client, url) => {
 
