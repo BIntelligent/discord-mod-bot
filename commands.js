@@ -1,6 +1,7 @@
 const { Message, MessageEmbed, Permissions } = require('discord.js')
 const ms = require('ms')
 const index = require('./index')
+const db = require('quick.db')
 
 class command {
 
@@ -8,7 +9,7 @@ class command {
 
         const messageCheck = message instanceof Message
         if(!message || messageCheck === false) throw new Error(`INVALID_KICK_MESSAGE: There is no discord.js Message provided or it is invalid.`)  
-        if(!member || !index.client.users.cache.get(member.user.id) || message.guild.members.cache.get(member.user.id ? member.user.id : '12345') || !member.user) throw new Error(`INVALID_KICK_MEMEBR: No valid member has been given`)
+        if(!member || !member.user || !message.guild.members.cache.get(member.user.id)) throw new Error(`INVALID_KICK_MEMEBR: No valid member has been given`)
         if(!reason || typeof reason !== 'string') reason = '-'
         if(!description || typeof description !== 'string') throw new Error(`INVALID_KICK_DESCRIPTION: There is no description provided or it isn't a string.`)
 
@@ -29,7 +30,7 @@ class command {
 
         const messageCheck = message instanceof Message
         if(!message || messageCheck === false) throw new Error(`INVALID_BAN_MESSAGE: There is no discord.js Message provided or it is invalid.`)  
-        if(!member || !index.client.users.cache.get(member.user.id) || message.guild.members.cache.get(member.user.id ? member.user.id : '12345') || !member.user) throw new Error(`INVALID_BAN_MEMEBR: No valid member has been given`)
+        if(!member || !member.user || !message.guild.members.cache.get(member.user.id)) throw new Error(`INVALID_BAN_MEMEBR: No valid member has been given`)
         if(!reason || typeof reason !== 'string') reason = '-'
         if(!days) days = 0
         if(isNaN(days)) throw new Error(`INVALID_BAN_DAYS: No valid day number provided.`)
@@ -52,7 +53,7 @@ class command {
 
         const messageCheck = message instanceof Message
         if(!message || messageCheck === false) throw new Error(`INVALID_MUTE_MESSAGE: There is no discord.js Message provided or it is invalid.`)  
-        if(!member || !index.client.users.cache.get(member.user.id) || message.guild.members.cache.get(member.user.id ? member.user.id : '12345') || !member.user) throw new Error(`INVALID_MUTE_MEMEBR: No valid member has been given`)
+        if(!member || !member.user || !message.guild.members.cache.get(member.user.id)) throw new Error(`INVALID_MUTE_MEMEBR: No valid member has been given`)
         if(!role || !role.id || !message.guild.roles.cache.get(role.id)) throw new Error(`INVALID_MUTE_ROLE: There is no Mute Role provided or it is invalid.`)
         if(!reason || typeof reason !== 'string') reason = '-'
         if(time) { if(isNaN(time) || !time.endsWith('s' || 'm' || 'h' || 'd')) throw new Error(`INVALID_MUTE_TIME: No valid time number provided or didn't ends with s/m/h/d.`) }
@@ -89,7 +90,8 @@ class command {
     unmute = async(message, member, role, reason, description) => {
 
         const messageCheck = message instanceof Message
-        if(!message || messageCheck === false) throw new Error(`INVALID_MUTE_MESSAGE: There is no discord.js Message provided or it is invalid.`)  
+        if(!message || messageCheck === false) throw new Error(`INVALID_MUTE_MESSAGE: There is no discord.js Message provided or it is invalid.`) 
+        if(!member || !member.user || !message.guild.members.cache.get(member.user.id)) throw new Error(`INVALID_MUTE_MEMEBR: No valid member has been given`) 
         if(!role || !role.id || !message.guild.roles.cache.get(role.id)) throw new Error(`INVALID_MUTE_ROLE: There is no Mute Role provided or it is invalid.`)
         if(!reason || typeof reason !== 'string') reason = '-'
         if(!description || typeof description !== 'string') throw new Error(`INVALID_MUTE_DESCRIPTION: There is no description provided or it isn't a string.`)
@@ -180,6 +182,18 @@ class command {
         const embed = new MessageEmbed()
         .setDescription(description)
         message.channel.send({ embed: embed })
+
+    }
+
+    warn = async(message, member, reason, description) => {
+
+        const messageCheck = message instanceof Message
+        if(!message || messageCheck === false) throw new Error(`INVALID_LOCK_MESSAGE: There is no discord.js Message provided or it is invalid.`)
+        if(!member || !member.user || !message.guild.members.cache.get(member.user.id)) throw new Error(`INVALID_MUTE_MEMEBR: No valid member has been given`)
+        if(!reason || typeof reason !== 'string') reason = '-'
+        if(!description || typeof description !== 'string') throw new Error(`INVALID_LOCK_DESCRIPTION: There is no description provided or it isn't a string.`)
+
+        
 
     }
 
